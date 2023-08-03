@@ -16,21 +16,12 @@ class DatabaseHelper {
   //reference variable of database...
   static Database? _database;
 
-  //for initializing instace of this class
-  Future<Database> get database async {
-    // if(_database==null)
-    //     _database=await initializeDatabase();
-    _database ??= await initializeDatabase();
-
-    return _database!;
-  }
-
   //initialize or get database from file
   Future<Database> initializeDatabase() async {
     String dbpath = await getDatabasesPath();
     dbpath = dbpath + "/mydb2.db";
-    var stddb = await openDatabase(dbpath, version: 1, onCreate: _createdb);
-    return stddb;
+    var database = await openDatabase(dbpath, version: 1, onCreate: _createdb);
+    return database;
   }
 
   //if initializing then create table for database
@@ -47,6 +38,15 @@ class DatabaseHelper {
     print('table created..');
   }
 
+//for initializing instace of this class
+  Future<Database> get database async {
+    // if(_database==null)
+    //     _database=await initializeDatabase();
+    _database ??= await initializeDatabase();
+
+    return _database!;
+  }
+
   Future<int> insertUser(Person obj) async {
     Database db = await instance.database;
 
@@ -59,6 +59,7 @@ class DatabaseHelper {
     Database db = await instance.database;
     List<Map<String, dynamic>> data = await db.query("person",
         where: "username=? and password=?", whereArgs: [username, password]);
+
     bool check = true;
     if (data.isEmpty) {
       check = false;

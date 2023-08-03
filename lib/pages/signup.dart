@@ -1,6 +1,11 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:login_signup_sqflite/database/local_Database.dart';
 import 'package:login_signup_sqflite/model/person.dart';
+
+import '../widgets/SignInButton.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -10,6 +15,20 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  File? _image;
+
+  Future getImage(bool FromCamera) async {
+    final image = await ImagePicker().pickImage(
+        source: FromCamera ? ImageSource.camera : ImageSource.gallery);
+    if (image == null) {
+      return;
+    }
+    final tempImg = File(image.path);
+    setState(() {
+      _image = tempImg;
+    });
+  }
+
   TextEditingController user = TextEditingController();
   TextEditingController pass = TextEditingController();
   TextEditingController confirmpass = TextEditingController();
@@ -33,11 +52,37 @@ class _SignUpState extends State<SignUp> {
               child: Column(
                 children: [
                   //for round profile photo
-                  CircleAvatar(
-                    backgroundImage: AssetImage(
-                      'assets/profile.png',
-                    ),
-                    radius: 100,
+                  GestureDetector(
+                    onTap: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        shape: const RoundedRectangleBorder(
+                            borderRadius: BorderRadius.vertical(
+                          top: Radius.circular(30),
+                        )),
+                        builder: (context) => DraggableScrollableSheet(
+                            initialChildSize: 0.4,
+                            maxChildSize: 0.9,
+                            minChildSize: 0.32,
+                            expand: false,
+                            builder: (context, scrollController) {
+                              return SingleChildScrollView(
+                                controller: scrollController,
+                                child: widgetsInBottomSheet(),
+                              );
+                            }),
+                      );
+                    },
+                    child: _image == null
+                        ? CircleAvatar(
+                            backgroundColor: Colors.blue.shade300,
+                            radius: 100,
+                          )
+                        : CircleAvatar(
+                            backgroundImage: FileImage(_image!),
+                            radius: 100,
+                          ),
                   ),
 
                   //text
@@ -138,6 +183,11 @@ class _SignUpState extends State<SignUp> {
                           onPressed: () {
                             onCreate(context);
                           },
+                          style: ElevatedButton.styleFrom(
+                            elevation: 2,
+                            primary: Colors.blue.shade400,
+                            shape: const StadiumBorder(),
+                          ),
                           child: Padding(
                             padding: const EdgeInsets.all(8.0),
                             child: Text(
@@ -151,6 +201,59 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget widgetsInBottomSheet() {
+    return Stack(
+      alignment: AlignmentDirectional.topCenter,
+      clipBehavior: Clip.none,
+      children: [
+        tipOnBottomSheet(),
+        Column(children: [
+          const SizedBox(
+            height: 100,
+          ),
+          SignInButton(
+            onTap: () {
+              getImage(true);
+              Navigator.pop(context);
+            },
+            iconPath: 'assets/logos/camera.png',
+            textLabel: 'Take from camera',
+            backgroundColor: Colors.grey.shade300,
+            elevation: 0.0,
+          ),
+          const SizedBox(
+            height: 40,
+          ),
+          SignInButton(
+            onTap: () {
+              getImage(false);
+              Navigator.pop(context);
+            },
+            iconPath: 'assets/logos/gallery.png',
+            textLabel: 'Take from gallery',
+            backgroundColor: Colors.grey.shade300,
+            elevation: 0.0,
+          ),
+        ])
+      ],
+    );
+  }
+
+  Widget tipOnBottomSheet() {
+    return Positioned(
+      top: -15,
+      child: Container(
+        width: 60,
+        height: 7,
+        margin: const EdgeInsets.only(bottom: 20),
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(5),
+          color: Colors.white,
         ),
       ),
     );

@@ -26,18 +26,12 @@ class _loginState extends State<login> {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                CircleAvatar(
-                  backgroundImage: AssetImage(
-                    'assets/profile.png',
-                  ),
-                  radius: 100,
-                ),
                 SizedBox(height: 10),
                 Text(
-                  "Login",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                  "login",
+                  style: TextStyle(fontSize: 44, fontWeight: FontWeight.bold),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 70),
                 TextFormField(
                   controller: user,
                   decoration: new InputDecoration(
@@ -59,7 +53,7 @@ class _loginState extends State<login> {
                     fontFamily: "Poppins",
                   ),
                 ),
-                SizedBox(height: 10),
+                SizedBox(height: 20),
                 TextFormField(
                   controller: pass,
                   decoration: new InputDecoration(
@@ -83,12 +77,17 @@ class _loginState extends State<login> {
                     fontFamily: "Poppins",
                   ),
                 ),
-                SizedBox(height: 20),
+                SizedBox(height: 50),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     ElevatedButton(
                         onPressed: login,
+                        style: ElevatedButton.styleFrom(
+                          elevation: 2,
+                          primary: Colors.blue.shade400,
+                          shape: const StadiumBorder(),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Text(
@@ -101,9 +100,14 @@ class _loginState extends State<login> {
                         onPressed: () {
                           _navigateToNextScreen(context);
                         },
+                        style: ElevatedButton.styleFrom(
+                          elevation: 2,
+                          primary: Colors.blue.shade400,
+                          shape: const StadiumBorder(),
+                        ),
                         child: Padding(
                           padding: const EdgeInsets.all(8.0),
-                          child: Text("SignUp", style: TextStyle(fontSize: 24)),
+                          child: Text("SignUp", style: TextStyle(fontSize: 24,color: Colors.orange[300])),
                         )),
                   ],
                 )
